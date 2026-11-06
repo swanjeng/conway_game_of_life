@@ -3,10 +3,15 @@
 #include <time.h>
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
+#define TITLE "Conway's Game of Life - Raylib"
 #define CELL_SIZE 20
 #define ARRAY_ROWS (SCREEN_HEIGHT / CELL_SIZE)
 #define ARRAY_COLS (SCREEN_WIDTH / CELL_SIZE)
-#define TITLE "Conway's Game of Life - Raylib"
+// neighbor cnt:  012345678
+#define BORN    0b000100000
+#define SURVIVE 0b001100000
+#define SEED_PERCENTAGE 25
+#define UPDATE_FREQ 5
 
 int cells[ARRAY_ROWS][ARRAY_COLS] = {};
 int cells1[ARRAY_ROWS][ARRAY_COLS] = {};
@@ -23,7 +28,7 @@ void drawGrid() {
 void initCells() {
     for (int i = 0; i < ARRAY_ROWS; i++) {
         for (int j = 0; j < ARRAY_COLS; j++) {
-            if (GetRandomValue(1, 3) == 1) cells[i][j] = 1;
+            if (GetRandomValue(1, 100) <= SEED_PERCENTAGE) cells[i][j] = 1;
         }
     }
 }
@@ -45,7 +50,7 @@ void updateCells() {
     for (int i = 0; i < ARRAY_ROWS; i++) {
         for (int j = 0; j < ARRAY_COLS; j++) {
             int neighbors = countNeighbor(i, j);
-            if ((cells[i][j] && (neighbors == 2 || neighbors == 3)) || (!cells[i][j] && neighbors == 3)) cells1[i][j] = 1;
+            if ((cells[i][j] && ((SURVIVE >> (8 - neighbors)) & 1)) || (!cells[i][j] && ((BORN >> (8 - neighbors)) & 1))) cells1[i][j] = 1;
             else cells1[i][j] = 0;
         }
     }
@@ -76,7 +81,7 @@ int main() {
     SetTargetFPS(60);
     while (!WindowShouldClose()) {
         frameCounter++;
-        if (frameCounter == 12) {
+        if (frameCounter >= 60 / UPDATE_FREQ) {
             updateCells();
             frameCounter = 0;
         }
