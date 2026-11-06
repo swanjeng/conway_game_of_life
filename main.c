@@ -3,7 +3,7 @@
 #include <time.h>
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
-#define CELL_SIZE 50
+#define CELL_SIZE 20
 #define ARRAY_ROWS (SCREEN_HEIGHT / CELL_SIZE)
 #define ARRAY_COLS (SCREEN_WIDTH / CELL_SIZE)
 #define TITLE "Conway's Game of Life - Raylib"
