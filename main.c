@@ -11,7 +11,11 @@
 #define BORN    0b000100000
 #define SURVIVE 0b001100000
 #define SEED_PERCENTAGE 25
-#define UPDATE_FREQ 5
+#define UPDATE_FREQ 60
+
+#define EMPTY_BOUND 0
+#define CYCLE_BOUND 1
+#define MODE CYCLE_BOUND
 
 int cells[ARRAY_ROWS][ARRAY_COLS] = {};
 int cells1[ARRAY_ROWS][ARRAY_COLS] = {};
@@ -35,14 +39,25 @@ void initCells() {
 
 int countNeighbor(int i, int j) {
     int cnt = 0;
-    if (i > 0 && j > 0) cnt += cells[i - 1][j - 1];
-    if (i > 0) cnt += cells[i - 1][j];
-    if (j > 0) cnt += cells[i][j - 1];
-    if (i < ARRAY_ROWS - 1 && j < ARRAY_COLS - 1) cnt += cells[i + 1][j + 1];
-    if (i < ARRAY_ROWS - 1) cnt += cells[i + 1][j];
-    if (j < ARRAY_COLS - 1) cnt += cells[i][j + 1];
-    if (i > 0 && j < ARRAY_COLS - 1) cnt += cells[i - 1][j + 1];
-    if (i < ARRAY_ROWS - 1 && j > 0) cnt += cells[i + 1][j - 1];
+    if (MODE == EMPTY_BOUND) {
+        if (i > 0 && j > 0) cnt += cells[i - 1][j - 1];
+        if (i > 0) cnt += cells[i - 1][j];
+        if (j > 0) cnt += cells[i][j - 1];
+        if (i < ARRAY_ROWS - 1 && j < ARRAY_COLS - 1) cnt += cells[i + 1][j + 1];
+        if (i < ARRAY_ROWS - 1) cnt += cells[i + 1][j];
+        if (j < ARRAY_COLS - 1) cnt += cells[i][j + 1];
+        if (i > 0 && j < ARRAY_COLS - 1) cnt += cells[i - 1][j + 1];
+        if (i < ARRAY_ROWS - 1 && j > 0) cnt += cells[i + 1][j - 1];
+    } else {
+        cnt += cells[(i + ARRAY_ROWS - 1) % ARRAY_ROWS][(j + ARRAY_COLS - 1) % ARRAY_COLS];
+        cnt += cells[(i + ARRAY_ROWS - 1) % ARRAY_ROWS][j];
+        cnt += cells[i][(j + ARRAY_COLS - 1) % ARRAY_COLS];
+        cnt += cells[(i + 1) % ARRAY_ROWS][(j + 1) % ARRAY_COLS];
+        cnt += cells[(i + 1) % ARRAY_ROWS][j];
+        cnt += cells[i][(j + 1) % ARRAY_COLS];
+        cnt += cells[(i + ARRAY_ROWS - 1) % ARRAY_ROWS][(j + 1) % ARRAY_COLS];
+        cnt += cells[(i + 1) % ARRAY_ROWS][(j + ARRAY_COLS - 1) % ARRAY_COLS];
+    }
     return cnt;
 }
 
